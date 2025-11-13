@@ -2,9 +2,8 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IVU 2.0 Mobile</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRENOTURN - Sistema IVU Macchinisti</title>
     <style>
         :root {
             --primary: #0055a4;
@@ -12,42 +11,34 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
-            --info: #17a2b8;
             --light: #f8f9fa;
             --dark: #343a40;
             --gray: #6c757d;
-            --safe-area-top: env(safe-area-inset-top);
-            --safe-area-bottom: env(safe-area-inset-bottom);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #f5f5f7;
+            background-color: #f5f5f5;
             color: #333;
-            padding-top: var(--safe-area-top);
-            padding-bottom: var(--safe-area-bottom);
-            overflow: hidden;
-            height: 100vh;
         }
         
-        /* Header iOS Style */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
         .header {
             background: linear-gradient(135deg, var(--primary), #003366);
             color: white;
-            padding: 12px 16px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding-top: calc(12px + var(--safe-area-top));
+            padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
@@ -60,238 +51,139 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-        
-        .logo h1 {
-            font-size: 1.2rem;
-            font-weight: 600;
+            gap: 15px;
         }
         
         .logo-icon {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
         }
         
-        .header-actions {
-            display: flex;
-            gap: 10px;
+        .logo-text h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
         }
         
-        .icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        /* Bottom Tab Bar */
-        .tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            padding-bottom: calc(10px + var(--safe-area-bottom));
-            border-top: 1px solid #e0e0e0;
-            z-index: 1000;
-        }
-        
-        .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: var(--gray);
-            font-size: 0.7rem;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 10px;
-            transition: all 0.2s;
-            flex: 1;
-            max-width: 80px;
-        }
-        
-        .tab-item.active {
-            color: var(--primary);
-        }
-        
-        .tab-icon {
-            font-size: 1.2rem;
-        }
-        
-        /* Main Content */
-        .main-content {
-            height: 100vh;
-            padding-top: 60px;
-            padding-bottom: 70px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .tab-content {
-            display: none;
-            padding: 16px;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        /* Map Section */
-        .map-section {
-            height: 300px;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            position: relative;
-        }
-        
-        #train-map {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .map-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .map-btn {
-            background: white;
-            border: none;
-            border-radius: 8px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        
-        /* Lists */
-        .list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            transition: all 0.2s;
-            background: white;
-        }
-        
-        .list-item.critical {
-            border-left: 4px solid var(--danger);
-            background-color: #fff5f5;
-        }
-        
-        .list-item.warning {
-            border-left: 4px solid var(--warning);
-            background-color: #fffef0;
-        }
-        
-        .list-item-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-        }
-        
-        .list-item-title {
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .list-item-subtitle {
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-        
-        .list-item-detail {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .delay-critical {
-            color: var(--danger);
-        }
-        
-        .delay-warning {
-            color: var(--warning);
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+        .logo-text p {
             font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+            opacity: 0.8;
         }
         
-        .btn-primary {
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .trenitalia-logo {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .login-card h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .login-card p {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
             background-color: var(--primary);
             color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            transition: background-color 0.3s;
         }
         
-        .btn-primary:active {
+        .btn:hover {
             background-color: #004080;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-trenitalia {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .btn-trenitalia:hover {
+            background: linear-gradient(135deg, #004080, #c10022);
         }
         
         .btn-outline {
@@ -300,1324 +192,1148 @@
             color: var(--primary);
         }
         
-        .btn-outline:active {
-            background-color: #f0f7ff;
+        .btn-outline:hover {
+            background-color: #f0f8ff;
         }
         
-        .btn-warning {
-            background-color: var(--warning);
-            color: black;
+        /* Dashboard */
+        .dashboard {
+            display: none;
         }
         
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
+        .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 20px;
+            margin-top: 20px;
         }
         
-        .stat-card {
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            background-color: #f8f9fa;
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-        
-        .modal-content {
+        .card {
             background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: slideUp 0.3s ease;
+            margin-bottom: 20px;
         }
         
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .modal-header {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         
-        .modal-title {
+        .card-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--primary);
         }
         
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
+        /* Today's Shift */
+        .shift-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
             color: var(--gray);
+            margin-bottom: 5px;
         }
         
-        .form-group {
-            margin-bottom: 16px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 6px;
+        .info-value {
+            font-size: 1.1rem;
             font-weight: 500;
         }
         
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: #f9f9f9;
+        .delay-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 80px;
-            left: 16px;
-            right: 16px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            color: white;
-            z-index: 1500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: slideDown 0.3s ease;
-        }
-        
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .notification.success {
+        .delay-none {
             background-color: var(--success);
+            color: white;
         }
         
-        .notification.warning {
+        .delay-low {
             background-color: var(--warning);
             color: black;
         }
         
-        .notification.danger {
+        .delay-high {
             background-color: var(--danger);
+            color: white;
         }
         
-        .notification.info {
-            background-color: var(--info);
+        /* Weekly Calendar */
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
         }
         
-        /* Empty State */
-        .empty-state {
+        .calendar-day {
             text-align: center;
-            padding: 40px 20px;
+            padding: 10px 5px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        
+        .calendar-day.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .calendar-day.rest {
+            background-color: #e9ecef;
             color: var(--gray);
         }
         
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-        
-        /* Swipe Actions */
-        .swipe-actions {
-            display: flex;
-        }
-        
-        .swipe-action {
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .day-name {
+            font-size: 0.8rem;
             font-weight: 500;
         }
         
-        .swipe-action.replace {
-            background-color: var(--primary);
+        .day-date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 5px 0;
         }
         
-        .swipe-action.details {
-            background-color: var(--info);
+        .day-shift {
+            font-size: 0.8rem;
         }
         
-        /* Loading Spinner */
+        /* Train Status */
+        .train-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+        }
+        
+        .train-icon {
+            font-size: 1.5rem;
+        }
+        
+        .train-info {
+            flex: 1;
+        }
+        
+        .train-number {
+            font-weight: 600;
+        }
+        
+        .train-route {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+        
+        @media (max-width: 992px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .agents-list {
+            margin-top: 20px;
+        }
+        
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #fafafa;
+        }
+        
+        .agent-info h4 {
+            margin-bottom: 5px;
+        }
+        
+        .agent-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .agent-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+        
+        /* Responsive */
+        @media (max-width: 576px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .login-card {
+                padding: 20px;
+            }
+            
+            .shift-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                text-align: center;
+            }
+        }
+        
+        /* Loading */
         .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
         
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        /* Pulse animation for critical trains */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        /* Messages */
+        .message {
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
         }
         
-        .pulse {
-            animation: pulse 1.5s infinite;
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 350px) {
-            .logo h1 {
-                font-size: 1rem;
-            }
-            
-            .tab-item {
-                font-size: 0.65rem;
-            }
-            
-            .tab-icon {
-                font-size: 1rem;
-            }
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">🚆</div>
-                <h1>IVU 2.0</h1>
-            </div>
-            <div class="header-actions">
-                <button class="icon-btn" id="notifications-btn">🔔</button>
-                <button class="icon-btn" id="refresh-btn">🔄</button>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🚆</div>
+                    <div class="logo-text">
+                        <h1>TRENOTURN</h1>
+                        <p>Sistema IVU per Macchinisti</p>
+                    </div>
+                </div>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="avatar" id="userAvatar">MC</div>
+                    <div>
+                        <div id="userName">Mario Rossi</div>
+                        <div id="userRole" style="font-size: 0.9rem; opacity: 0.8;">Macchinista</div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="logoutBtn" style="margin-left: 15px;">Esci</button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Dashboard Tab -->
-        <div class="tab-content active" id="dashboard-tab">
-            <!-- Mappa -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Mappa Treni Live</h2>
-                    <div class="btn btn-outline btn-sm" id="center-map">Centra</div>
+    <!-- Login Screen -->
+    <div class="container">
+        <div class="login-screen" id="loginScreen">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="trenitalia-logo">TRENITALIA SSB</div>
                 </div>
-                <div class="map-section">
-                    <div id="train-map"></div>
-                    <div class="map-controls">
-                        <button class="map-btn" id="refresh-trains">🔄</button>
-                        <button class="map-btn" id="toggle-critical">⚠️</button>
+                <h2>Accesso al Sistema</h2>
+                <p>Accedi con le tue credenziali Trenitalia</p>
+                
+                <div class="message message-error" id="loginError"></div>
+                
+                <div class="form-group">
+                    <label for="username">Nome Utente</label>
+                    <input type="text" id="username" class="form-control" placeholder="Inserisci nome utente">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Inserisci password">
+                </div>
+                <button class="btn btn-block btn-trenitalia" id="loginBtn">Accedi con Trenitalia</button>
+                
+                <div style="margin-top: 25px; text-align: center;">
+                    <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 15px;">Oppure accedi come:</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline" id="demoMacchinistaBtn">Demo Macchinista</button>
+                        <button class="btn btn-outline" id="demoAdminBtn">Demo Amministratore</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Allarmi Critici -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Allarmi Critici</h2>
-                    <span class="btn btn-danger btn-sm" id="critical-count">0</span>
-                </div>
-                <div class="list" id="critical-trains">
-                    <!-- I treni critici verranno aggiunti dinamicamente -->
-                </div>
-            </div>
-
-            <!-- Statistiche -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Statistiche Oggi</h2>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="active-trains-count">8</div>
-                        <div class="stat-label">Treni Attivi</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="critical-delays">2</div>
-                        <div class="stat-label">Ritardi >40min</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="month-replacements">3</div>
-                        <div class="stat-label">Sostituzioni</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="available-agents">12</div>
-                        <div class="stat-label">Agenti Disp.</div>
-                    </div>
+                
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <p style="font-size: 0.85rem; color: var(--gray); text-align: center;">
+                        <a href="https://www.webcrew.trenitalia.it/mbweb/main/trenitalia/desktop/main-menu" 
+                           target="_blank" style="color: var(--primary); text-decoration: none;">
+                           Portale Ufficiale Trenitalia
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Turni Tab -->
-        <div class="tab-content" id="shifts-tab">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">I Miei Turni Oggi</h2>
-                    <button class="btn btn-outline btn-sm" id="view-month">Mese</button>
-                </div>
-                <div class="list" id="my-shifts">
-                    <!-- I turni dell'utente verranno aggiunti dinamicamente -->
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Turni del Team</h2>
-                    <button class="btn btn-outline btn-sm" id="filter-shifts">Filtra</button>
-                </div>
-                <div class="list" id="team-shifts">
-                    <!-- I turni del team verranno aggiunti dinamicamente -->
-                </div>
-            </div>
+        <!-- Loading Screen -->
+        <div class="loading" id="loadingScreen">
+            <div class="spinner"></div>
+            <p>Connessione al sistema Trenitalia in corso...</p>
         </div>
 
-        <!-- Agenti Tab -->
-        <div class="tab-content" id="agents-tab">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Agenti Disponibili</h2>
-                    <button class="btn btn-primary btn-sm" id="search-agents">Cerca</button>
-                </div>
-                <div class="list" id="available-agents-list">
-                    <!-- Gli agenti disponibili verranno aggiunti dinamicamente -->
-                </div>
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="today">Turno di Oggi</div>
+                <div class="nav-tab" data-tab="calendar">Calendario</div>
+                <div class="nav-tab" data-tab="stats">Statistiche</div>
+                <div class="nav-tab" data-tab="trains">Treni in Servizio</div>
+                <div class="nav-tab admin-only" data-tab="admin" style="display: none;">Gestione Agenti</div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Agenti Assegnati</h2>
-                    <button class="btn btn-outline btn-sm" id="filter-assigned">Filtra</button>
-                </div>
-                <div class="list" id="assigned-agents-list">
-                    <!-- Gli agenti assegnati verranno aggiunti dinamicamente -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Sostituzioni Tab -->
-        <div class="tab-content" id="replacements-tab">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Sostituzioni in Corso</h2>
-                    <button class="btn btn-primary btn-sm" id="auto-replace-btn">Auto</button>
-                </div>
-                <div class="list" id="active-replacements">
-                    <!-- Le sostituzioni attive verranno aggiunte dinamicamente -->
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Storico Sostituzioni</h2>
-                    <button class="btn btn-outline btn-sm" id="clear-history">Pulisci</button>
-                </div>
-                <div class="list" id="replacements-history">
-                    <!-- Lo storico sostituzioni verrà aggiunto dinamicamente -->
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Bottom Tab Bar -->
-    <nav class="tab-bar">
-        <button class="tab-item active" data-tab="dashboard">
-            <div class="tab-icon">📊</div>
-            <span>Dashboard</span>
-        </button>
-        <button class="tab-item" data-tab="shifts">
-            <div class="tab-icon">📅</div>
-            <span>Turni</span>
-        </button>
-        <button class="tab-item" data-tab="agents">
-            <div class="tab-icon">👥</div>
-            <span>Agenti</span>
-        </button>
-        <button class="tab-item" data-tab="replacements">
-            <div class="tab-icon">🔄</div>
-            <span>Sostituzioni</span>
-        </button>
-    </nav>
-
-    <!-- Modale Sostituzione -->
-    <div class="modal" id="replacement-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Sostituzione Agente</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <form id="replacement-form">
-                <div class="form-group">
-                    <label class="form-label">Treno Critico</label>
-                    <div class="form-control" id="critical-train-info" style="background: #f8f9fa; padding: 10px;">
-                        Nessun treno selezionato
+            <!-- Today's Shift Tab -->
+            <div class="tab-content active" id="todayTab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Il Tuo Turno di Oggi</div>
+                        <div id="currentDate" style="font-weight: 500;"></div>
+                    </div>
+                    <div class="shift-info" id="todayShiftInfo">
+                        <!-- Dynamic content will be inserted here -->
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="replacement-agent">Agente Sostituto</label>
-                    <select class="form-control" id="replacement-agent" required>
-                        <option value="">Seleziona agente disponibile...</option>
-                    </select>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Dettagli Treno</div>
+                    </div>
+                    <div id="trainDetails">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="replacement-reason">Motivazione</label>
-                    <select class="form-control" id="replacement-reason" required>
-                        <option value="delay">Ritardo superiore a 40 minuti</option>
-                        <option value="emergency">Emergenza agente</option>
-                        <option value="optimization">Ottimizzazione turno</option>
-                        <option value="other">Altro</option>
-                    </select>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div class="tab-content" id="calendarTab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Calendario Settimanale</div>
+                    </div>
+                    <div class="calendar" id="weeklyCalendar">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="replacement-notes">Note Aggiuntive</label>
-                    <textarea class="form-control" id="replacement-notes" rows="3" placeholder="Inserisci note aggiuntive..."></textarea>
+            </div>
+
+            <!-- Statistics Tab -->
+            <div class="tab-content" id="statsTab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Le Tue Statistiche</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Ore Lavorate</div>
+                            <div class="stat-value" id="hoursWorked">156</div>
+                            <div class="stat-label">Questo Mese</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Km Percorsi</div>
+                            <div class="stat-value" id="kmTraveled">8,450</div>
+                            <div class="stat-label">Questo Mese</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Treni Guidati</div>
+                            <div class="stat-value" id="trainsDriven">42</div>
+                            <div class="stat-label">Questo Mese</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Puntualità</div>
+                            <div class="stat-value" id="punctuality">94%</div>
+                            <div class="stat-label">Media Mensile</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline close-modal">Annulla</button>
-                    <button type="submit" class="btn btn-primary">Conferma Sostituzione</button>
+            </div>
+
+            <!-- Trains Tab -->
+            <div class="tab-content" id="trainsTab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Treni in Servizio Oggi</div>
+                    </div>
+                    <div id="trainsList">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <!-- Admin Tab -->
+            <div class="tab-content" id="adminTab">
+                <div class="admin-panel">
+                    <div class="admin-header">
+                        <div class="card-title">Gestione Agenti</div>
+                    </div>
+                    
+                    <div class="message message-success" id="adminSuccess"></div>
+                    <div class="message message-error" id="adminError"></div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Aggiungi Nuovo Agente</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newAgentName">Nome</label>
+                                <input type="text" id="newAgentName" class="form-control" placeholder="Nome">
+                            </div>
+                            <div class="form-group">
+                                <label for="newAgentSurname">Cognome</label>
+                                <input type="text" id="newAgentSurname" class="form-control" placeholder="Cognome">
+                            </div>
+                            <div class="form-group">
+                                <label for="newAgentSede">Sede</label>
+                                <select id="newAgentSede" class="form-control">
+                                    <option value="Milano Centrale">Milano Centrale</option>
+                                    <option value="Roma Termini">Roma Termini</option>
+                                    <option value="Napoli Centrale">Napoli Centrale</option>
+                                    <option value="Torino Porta Nuova">Torino Porta Nuova</option>
+                                    <option value="Firenze SMN">Firenze SMN</option>
+                                    <option value="Bologna Centrale">Bologna Centrale</option>
+                                    <option value="Venezia Mestre">Venezia Mestre</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="newAgentAbilities">Abilitazioni</label>
+                                <select id="newAgentAbilities" class="form-control" multiple style="height: 100px;">
+                                    <option value="ETR500">ETR500</option>
+                                    <option value="ETR700">ETR700</option>
+                                    <option value="ETR1000">ETR1000</option>
+                                    <option value="G2000">G2000</option>
+                                    <option value="D445">D445</option>
+                                    <option value="E402">E402</option>
+                                </select>
+                                <small style="color: var(--gray);">Tieni premuto Ctrl per selezionare più abilitazioni</small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-block" id="addAgentBtn">Aggiungi Agente</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Agenti Registrati</div>
+                        </div>
+                        <div class="agents-list" id="agentsList">
+                            <!-- Dynamic content will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Inizializzazione app mobile
-        let map;
-        let trainMarkers = [];
-        let liveTrains = [];
-        let monthlyShifts = [];
-        let allAgents = [];
-        let currentUser = null;
-        let autoReplacementMode = true;
-        let replacementHistory = [];
-        let showOnlyCritical = false;
-
-        // Coordinate principali stazioni italiane
-        const italianStations = {
-            'Milano Centrale': { lat: 45.486, lng: 9.204 },
-            'Roma Termini': { lat: 41.900, lng: 12.502 },
-            'Napoli Centrale': { lat: 40.853, lng: 14.272 },
-            'Torino Porta Nuova': { lat: 45.062, lng: 7.678 },
-            'Firenze SMN': { lat: 43.776, lng: 11.248 },
-            'Bologna Centrale': { lat: 44.506, lng: 11.343 },
-            'Venezia Mestre': { lat: 45.482, lng: 12.235 },
-            'Verona Porta Nuova': { lat: 45.429, lng: 10.984 },
-            'Genova Brignole': { lat: 44.408, lng: 8.946 },
-            'Bari Centrale': { lat: 41.118, lng: 16.869 }
+        // Sample data - In a real application, this would come from a backend
+        let macchinistiData = {
+            "MI_001": {
+                nome: "Mario",
+                cognome: "Rossi",
+                sede: "Milano Centrale",
+                abilitazioni: ["ETR500", "ETR1000"],
+                oreLavorate: 156,
+                kmPercorsi: 8450,
+                treniGuidati: 42,
+                puntualita: 94,
+                ruolo: "macchinista"
+            },
+            "NA_015": {
+                nome: "Luigi",
+                cognome: "Bianchi",
+                sede: "Napoli Centrale",
+                abilitazioni: ["ETR500", "G2000"],
+                oreLavorate: 142,
+                kmPercorsi: 7920,
+                treniGuidati: 38,
+                puntualita: 91,
+                ruolo: "macchinista"
+            },
+            "ADMIN_001": {
+                nome: "Admin",
+                cognome: "Sistema",
+                sede: "Roma Termini",
+                abilitazioni: ["ETR500", "ETR700", "ETR1000", "G2000"],
+                oreLavorate: 0,
+                kmPercorsi: 0,
+                treniGuidati: 0,
+                puntualita: 0,
+                ruolo: "amministratore"
+            }
         };
 
-        // Simulazione dati treni reali
-        const trainRoutes = [
-            { number: 'Frecciarossa 9574', from: 'Milano Centrale', to: 'Roma Termini', type: 'AV' },
-            { number: 'Frecciarossa 9610', from: 'Torino Porta Nuova', to: 'Napoli Centrale', type: 'AV' },
-            { number: 'Frecciargento 9420', from: 'Venezia Mestre', to: 'Firenze SMN', type: 'AV' },
-            { number: 'Frecciabianca 9782', from: 'Roma Termini', to: 'Milano Centrale', type: 'IC' },
-            { number: 'Frecciarossa 9545', from: 'Napoli Centrale', to: 'Torino Porta Nuova', type: 'AV' },
-            { number: 'Regionale 23456', from: 'Bologna Centrale', to: 'Firenze SMN', type: 'REG' },
-            { number: 'Frecciargento 8850', from: 'Genova Brignole', to: 'Roma Termini', type: 'AV' },
-            { number: 'Frecciarossa 8932', from: 'Milano Centrale', to: 'Venezia Mestre', type: 'AV' }
+        const turniSettimanali = {
+            "MI_001": [
+                { data: "Lun 16", turno: "M", treno: "AV 9576", attivo: false },
+                { data: "Mar 17", turno: "M", treno: "AV 8842", attivo: false },
+                { data: "Mer 18", turno: "P", treno: "AV 9215", attivo: false },
+                { data: "Gio 19", turno: "P", treno: "AV 8933", attivo: false },
+                { data: "Ven 20", turno: "N", treno: "AV 8751", attivo: false },
+                { data: "Sab 21", turno: "N", treno: "-", attivo: false },
+                { data: "Dom 22", turno: "R", treno: "-", attivo: true }
+            ],
+            "NA_015": [
+                { data: "Lun 16", turno: "P", treno: "AV 9210", attivo: false },
+                { data: "Mar 17", turno: "P", treno: "AV 8945", attivo: false },
+                { data: "Mer 18", turno: "N", treno: "AV 8722", attivo: false },
+                { data: "Gio 19", turno: "R", treno: "-", attivo: false },
+                { data: "Ven 20", turno: "M", treno: "AV 9581", attivo: false },
+                { data: "Sab 21", turno: "M", treno: "AV 8855", attivo: false },
+                { data: "Dom 22", turno: "P", treno: "AV 9240", attivo: true }
+            ],
+            "ADMIN_001": [
+                { data: "Lun 16", turno: "A", treno: "-", attivo: false },
+                { data: "Mar 17", turno: "A", treno: "-", attivo: false },
+                { data: "Mer 18", turno: "A", treno: "-", attivo: false },
+                { data: "Gio 19", turno: "A", treno: "-", attivo: false },
+                { data: "Ven 20", turno: "A", treno: "-", attivo: false },
+                { data: "Sab 21", turno: "A", treno: "-", attivo: false },
+                { data: "Dom 22", turno: "A", treno: "-", attivo: true }
+            ]
+        };
+
+        const turnoOggi = {
+            "MI_001": {
+                treno: "AV 8842",
+                percorso: "Milano Centrale - Roma Termini",
+                orario: "06:15 - 14:30",
+                ritardo: 5,
+                stato: "In Viaggio",
+                oreServizio: 8.25,
+                oreStraordinario: 0.5,
+                km: 624
+            },
+            "NA_015": {
+                treno: "AV 9240",
+                percorso: "Napoli Centrale - Milano Centrale",
+                orario: "14:45 - 22:15",
+                ritardo: 0,
+                stato: "In Partenza",
+                oreServizio: 7.5,
+                oreStraordinario: 0,
+                km: 840
+            },
+            "ADMIN_001": {
+                treno: "-",
+                percorso: "Amministrazione Sistema",
+                orario: "08:00 - 17:00",
+                ritardo: 0,
+                stato: "In Servizio",
+                oreServizio: 8.0,
+                oreStraordinario: 0,
+                km: 0
+            }
+        };
+
+        const treniInServizio = [
+            { numero: "AV 8842", percorso: "Milano - Roma", ritardo: 5, stato: "In Viaggio" },
+            { numero: "AV 9215", percorso: "Roma - Napoli", ritardo: 0, stato: "In Orario" },
+            { numero: "AV 8933", percorso: "Torino - Milano", ritardo: 8, stato: "In Ritardo" },
+            { numero: "AV 8751", percorso: "Firenze - Bologna", ritardo: 3, stato: "In Viaggio" },
+            { numero: "AV 9581", percorso: "Venezia - Milano", ritardo: 0, stato: "In Orario" }
         ];
 
-        // Inizializzazione
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const dashboard = document.getElementById('dashboard');
+        const loginBtn = document.getElementById('loginBtn');
+        const demoMacchinistaBtn = document.getElementById('demoMacchinistaBtn');
+        const demoAdminBtn = document.getElementById('demoAdminBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+        const userInfo = document.getElementById('userInfo');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const currentDate = document.getElementById('currentDate');
+        const todayShiftInfo = document.getElementById('todayShiftInfo');
+        const trainDetails = document.getElementById('trainDetails');
+        const weeklyCalendar = document.getElementById('weeklyCalendar');
+        const hoursWorked = document.getElementById('hoursWorked');
+        const kmTraveled = document.getElementById('kmTraveled');
+        const trainsDriven = document.getElementById('trainsDriven');
+        const punctuality = document.getElementById('punctuality');
+        const trainsList = document.getElementById('trainsList');
+        const addAgentBtn = document.getElementById('addAgentBtn');
+        const agentsList = document.getElementById('agentsList');
+        const adminSuccess = document.getElementById('adminSuccess');
+        const adminError = document.getElementById('adminError');
 
-        function initializeApp() {
-            // Inizializzazione mappa
-            initMap();
-            
-            // Genera dati di esempio
-            generateAgents();
-            generateMonthlyShifts();
-            loadLiveTrainData();
-            
-            // Imposta utente corrente
-            currentUser = allAgents[0]; // Simula il primo agente come utente corrente
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Setup tab navigation
-            setupTabNavigation();
-            
-            // Avvia monitoraggio automatico
-            setInterval(monitorCriticalDelays, 15000); // Controlla ogni 15 secondi
-            setInterval(updateTrainPositions, 30000); // Aggiorna ogni 30 secondi
-            
-            // Aggiorna interfaccia iniziale
-            updateDashboard();
-            updateShiftsTab();
-            updateAgentsTab();
-            updateReplacementsTab();
-        }
+        // Current user
+        let currentUser = null;
 
-        function initMap() {
-            // Inizializza la mappa centrata sull'Italia
-            map = L.map('train-map').setView([42.5, 12.5], 6);
+        // Initialize the application
+        function init() {
+            // Set current date
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDate.textContent = today.toLocaleDateString('it-IT', options);
             
-            // Aggiungi layer della mappa
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+            // Add event listeners
+            loginBtn.addEventListener('click', handleTrenitaliaLogin);
+            demoMacchinistaBtn.addEventListener('click', () => handleDemoLogin('MI_001'));
+            demoAdminBtn.addEventListener('click', () => handleDemoLogin('ADMIN_001'));
+            logoutBtn.addEventListener('click', handleLogout);
+            addAgentBtn.addEventListener('click', handleAddAgent);
             
-            // Aggiungi marcatori per le stazioni principali
-            Object.entries(italianStations).forEach(([name, coords]) => {
-                L.marker(coords)
-                    .addTo(map)
-                    .bindPopup(`<b>${name}</b><br>Stazione principale`);
-            });
-        }
-
-        function generateAgents() {
-            // Genera 160 agenti con dati realistici
-            const stations = ['MI', 'RM', 'NA', 'TO', 'VE', 'BO', 'FI', 'GE'];
-            const qualifications = ['ETR500', 'ETR700', 'G2000', 'ETR1000'];
-            
-            allAgents = Array.from({ length: 160 }, (_, i) => {
-                const station = stations[Math.floor(Math.random() * stations.length)];
-                return {
-                    id: i + 1,
-                    name: `Agente ${i + 1}`,
-                    badge: `PDC${String(i + 1).padStart(3, '0')}`,
-                    baseStation: station,
-                    qualifications: qualifications.slice(0, Math.floor(Math.random() * 3) + 1),
-                    status: 'active',
-                    currentAssignment: null,
-                    monthlyShifts: Math.floor(Math.random() * 20),
-                    isAvailable: Math.random() > 0.3 // 70% disponibili
-                };
-            });
-        }
-
-        function generateMonthlyShifts() {
-            const daysInMonth = new Date().getDate();
-            const shifts = [];
-            
-            // Distribuisci i 160 agenti sui turni del mese
-            let agentIndex = 0;
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dailyShifts = [];
-                const shiftsPerDay = Math.floor(160 / daysInMonth) + (day <= (160 % daysInMonth) ? 1 : 0);
-                
-                for (let i = 0; i < shiftsPerDay; i++) {
-                    if (agentIndex < allAgents.length) {
-                        const agent = allAgents[agentIndex];
-                        const shift = {
-                            id: `${day}-${i}`,
-                            date: new Date(new Date().getFullYear(), new Date().getMonth(), day),
-                            agent: agent,
-                            train: assignRandomTrain(),
-                            status: 'assigned',
-                            isCritical: false
-                        };
-                        
-                        dailyShifts.push(shift);
-                        agent.monthlyShifts++;
-                        
-                        // Assegna alcuni treni all'agente corrente
-                        if (agentIndex === 0 && day === new Date().getDate()) {
-                            agent.currentAssignment = shift.train.number;
-                            agent.isAvailable = false;
-                        }
-                        
-                        agentIndex++;
+            // Add tab switching functionality
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab') + 'Tab';
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // If admin tab is selected, load agents list
+                    if (this.getAttribute('data-tab') === 'admin') {
+                        loadAgentsList();
                     }
+                });
+            });
+            
+            // Allow login with Enter key
+            usernameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleTrenitaliaLogin();
                 }
-                
-                shifts.push(...dailyShifts);
+            });
+            
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleTrenitaliaLogin();
+                }
+            });
+        }
+
+        // Handle Trenitalia login
+        function handleTrenitaliaLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!username || !password) {
+                showLoginError('Inserisci nome utente e password');
+                return;
             }
             
-            monthlyShifts = shifts;
-        }
-
-        function assignRandomTrain() {
-            const route = trainRoutes[Math.floor(Math.random() * trainRoutes.length)];
-            return {
-                number: route.number,
-                from: route.from,
-                to: route.to,
-                type: route.type
-            };
-        }
-
-        function loadLiveTrainData() {
-            // Simula il caricamento dei dati treni reali con ritardi critici
-            liveTrains = trainRoutes.map((route, index) => {
-                // 30% di probabilità di ritardo critico per dimostrazione
-                const hasCriticalDelay = Math.random() < 0.3;
-                const delay = hasCriticalDelay ? Math.floor(Math.random() * 60) + 40 : 
-                              Math.random() > 0.7 ? Math.floor(Math.random() * 30) : 0;
-                
-                const isCancelled = Math.random() > 0.95;
-                
-                // Calcola posizione interpolata
-                const fromCoords = italianStations[route.from];
-                const toCoords = italianStations[route.to];
-                const progress = Math.random() * 0.8 + 0.1;
-                
-                // Trova l'agente assegnato a questo treno
-                const assignedShift = monthlyShifts.find(shift => 
-                    shift.train.number === route.number && 
-                    isToday(shift.date)
-                );
-                
-                return {
-                    id: index + 1,
-                    number: route.number,
-                    from: route.from,
-                    to: route.to,
-                    type: route.type,
-                    delay: delay,
-                    cancelled: isCancelled,
-                    position: {
-                        lat: fromCoords.lat + (toCoords.lat - fromCoords.lat) * progress,
-                        lng: fromCoords.lng + (toCoords.lng - fromCoords.lng) * progress
-                    },
-                    speed: Math.floor(Math.random() * 200) + 50,
-                    lastUpdate: new Date(),
-                    assignedAgent: assignedShift ? assignedShift.agent : null,
-                    needsReplacement: delay > 40 && !isCancelled
-                };
-            });
+            // Show loading screen
+            loginScreen.style.display = 'none';
+            loadingScreen.style.display = 'block';
             
-            updateTrainMarkers();
-            updateStatistics();
-        }
-
-        function isToday(date) {
-            const today = new Date();
-            return date.getDate() === today.getDate() && 
-                   date.getMonth() === today.getMonth() && 
-                   date.getFullYear() === today.getFullYear();
-        }
-
-        function updateTrainMarkers() {
-            // Rimuovi marcatori esistenti
-            trainMarkers.forEach(marker => map.removeLayer(marker));
-            trainMarkers = [];
-            
-            // Aggiungi nuovi marcatori
-            liveTrains.forEach(train => {
-                if (train.cancelled) return;
-                
-                // Se è attivo il filtro critico e il treno non è critico, salta
-                if (showOnlyCritical && !train.needsReplacement) return;
-                
-                // Determina colore in base al ritardo
-                let color;
-                if (train.delay === 0) {
-                    color = '#28a745'; // Verde - in orario
-                } else if (train.delay <= 15) {
-                    color = '#ffc107'; // Giallo - ritardo leggero
-                } else if (train.delay <= 40) {
-                    color = '#fd7e14'; // Arancione - ritardo significativo
+            // Simulate Trenitalia authentication
+            setTimeout(() => {
+                // In a real application, this would make an API call to Trenitalia
+                if (username === 'admin' && password === 'admin') {
+                    handleDemoLogin('ADMIN_001');
+                } else if (username === 'macchinista' && password === 'macchinista') {
+                    handleDemoLogin('MI_001');
                 } else {
-                    color = '#dc3545'; // Rosso - ritardo critico
+                    loadingScreen.style.display = 'none';
+                    loginScreen.style.display = 'flex';
+                    showLoginError('Credenziali non valide. Usa "admin/admin" o "macchinista/macchinista" per il demo');
                 }
-                
-                // Crea icona personalizzata
-                const trainIcon = L.divIcon({
-                    className: 'train-marker',
-                    html: `<div style="
-                        width: ${train.delay > 40 ? '20px' : '16px'}; 
-                        height: ${train.delay > 40 ? '20px' : '16px'}; 
-                        background: ${color}; 
-                        border: 3px solid white; 
-                        border-radius: 50%; 
-                        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-                        ${train.delay > 40 ? 'animation: pulse 1.5s infinite;' : ''}
-                    "></div>`,
-                    iconSize: train.delay > 40 ? [20, 20] : [16, 16],
-                    iconAnchor: train.delay > 40 ? [10, 10] : [8, 8]
-                });
-                
-                const marker = L.marker([train.position.lat, train.position.lng], { icon: trainIcon })
-                    .addTo(map)
-                    .bindPopup(createTrainPopup(train));
-                
-                marker.on('click', () => showTrainDetails(train));
-                trainMarkers.push(marker);
-            });
-            
-            document.getElementById('active-trains-count').textContent = liveTrains.filter(t => !t.cancelled).length;
+            }, 2000);
         }
 
-        function createTrainPopup(train) {
-            const delayText = train.delay === 0 ? 
-                '<span style="color: #28a745;">In orario</span>' : 
-                `<span class="delay-${train.delay > 40 ? 'danger' : 'warning'}">Ritardo: ${train.delay} min</span>`;
+        // Handle demo login
+        function handleDemoLogin(userId) {
+            currentUser = userId;
+            loadingScreen.style.display = 'none';
+            showDashboard();
+        }
+
+        // Show login error
+        function showLoginError(message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show dashboard after login
+        function showDashboard() {
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            userInfo.style.display = 'flex';
             
-            const agentInfo = train.assignedAgent ? 
-                `<div><strong>Agente:</strong> ${train.assignedAgent.name} (${train.assignedAgent.badge})</div>` :
-                '<div><strong>Agente:</strong> Non assegnato</div>';
+            // Update user info
+            const userData = macchinistiData[currentUser];
+            userName.textContent = `${userData.nome} ${userData.cognome}`;
+            userRole.textContent = userData.ruolo === 'amministratore' ? 'Amministratore' : 'Macchinista';
+            userAvatar.textContent = userData.nome[0] + userData.cognome[0];
             
-            const replacementAlert = train.needsReplacement ? 
-                '<div style="color: var(--danger); font-weight: bold;">⚠️ SOSTITUZIONE RICHIESTA</div>' : '';
+            // Show/hide admin tab based on role
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = userData.ruolo === 'amministratore' ? 'block' : 'none';
+            });
             
-            return `
-                <div class="train-popup">
-                    <div class="train-popup-header">${train.number}</div>
-                    <div class="train-popup-details">
-                        <strong>Percorso:</strong> ${train.from} → ${train.to}
+            // Update statistics
+            hoursWorked.textContent = userData.oreLavorate;
+            kmTraveled.textContent = userData.kmPercorsi.toLocaleString();
+            trainsDriven.textContent = userData.treniGuidati;
+            punctuality.textContent = `${userData.puntualita}%`;
+            
+            // Load today's shift
+            loadTodaysShift();
+            
+            // Load weekly calendar
+            loadWeeklyCalendar();
+            
+            // Load trains in service
+            loadTrainsInService();
+        }
+
+        // Handle logout
+        function handleLogout() {
+            currentUser = null;
+            dashboard.style.display = 'none';
+            userInfo.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            
+            // Reset form
+            usernameInput.value = '';
+            passwordInput.value = '';
+        }
+
+        // Load today's shift information
+        function loadTodaysShift() {
+            const shift = turnoOggi[currentUser];
+            
+            let delayBadgeClass = 'delay-none';
+            let delayText = 'In orario';
+            
+            if (shift.ritardo > 0 && shift.ritardo <= 10) {
+                delayBadgeClass = 'delay-low';
+                delayText = `${shift.ritardo} min ritardo`;
+            } else if (shift.ritardo > 10) {
+                delayBadgeClass = 'delay-high';
+                delayText = `${shift.ritardo} min ritardo`;
+            }
+            
+            todayShiftInfo.innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">Treno</div>
+                    <div class="info-value">${shift.treno}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Percorso</div>
+                    <div class="info-value">${shift.percorso}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Orario</div>
+                    <div class="info-value">${shift.orario}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Stato</div>
+                    <div class="info-value">
+                        ${shift.stato} 
+                        <span class="delay-badge ${delayBadgeClass}">${delayText}</span>
                     </div>
-                    <div class="train-popup-details">
-                        <strong>Tipo:</strong> ${train.type}
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Ore Servizio</div>
+                    <div class="info-value">${shift.oreServizio} h</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Straordinario</div>
+                    <div class="info-value">${shift.oreStraordinario} h</div>
+                </div>
+            `;
+            
+            trainDetails.innerHTML = `
+                <div class="train-status">
+                    <div class="train-icon">🚄</div>
+                    <div class="train-info">
+                        <div class="train-number">${shift.treno}</div>
+                        <div class="train-route">${shift.percorso}</div>
                     </div>
-                    ${agentInfo}
-                    <div class="train-popup-details">
-                        <strong>Velocità:</strong> ${train.speed} km/h
+                    <div class="delay-badge ${delayBadgeClass}">${delayText}</div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div class="info-item">
+                        <div class="info-label">Km Percorsi</div>
+                        <div class="info-value">${shift.km} km</div>
                     </div>
-                    <div class="train-popup-delay">
-                        ${delayText}
+                    <div class="info-item">
+                        <div class="info-label">Prossima Fermata</div>
+                        <div class="info-value">${getNextStop(shift.treno)}</div>
                     </div>
-                    ${replacementAlert}
                 </div>
             `;
         }
 
-        function updateDashboard() {
-            updateCriticalTrainsPanel();
-            updateStatistics();
-        }
-
-        function updateCriticalTrainsPanel() {
-            const criticalContainer = document.getElementById('critical-trains');
-            criticalContainer.innerHTML = '';
+        // Load weekly calendar
+        function loadWeeklyCalendar() {
+            const calendarData = turniSettimanali[currentUser];
             
-            const criticalTrains = liveTrains.filter(train => train.needsReplacement);
+            weeklyCalendar.innerHTML = '';
             
-            document.getElementById('critical-count').textContent = criticalTrains.length;
-            document.getElementById('critical-delays').textContent = criticalTrains.length;
-            
-            if (criticalTrains.length === 0) {
-                criticalContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">✅</div>
-                        <p>Nessun allarme critico</p>
-                    </div>
+            calendarData.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = `calendar-day ${day.attivo ? 'active' : ''} ${day.turno === 'R' || day.turno === 'A' ? 'rest' : ''}`;
+                
+                dayElement.innerHTML = `
+                    <div class="day-name">${day.data.split(' ')[0]}</div>
+                    <div class="day-date">${day.data.split(' ')[1]}</div>
+                    <div class="day-shift">${getShiftName(day.turno)}</div>
+                    <div class="train-route">${day.treno}</div>
                 `;
-                return;
-            }
-            
-            criticalTrains.forEach(train => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item critical';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${train.number}</div>
-                        <div class="list-item-subtitle">${train.from} → ${train.to}</div>
-                        <div class="list-item-detail delay-critical">Ritardo: ${train.delay} min - SOSTITUZIONE RICHIESTA</div>
-                        ${train.assignedAgent ? 
-                            `<div class="list-item-subtitle">Agente: ${train.assignedAgent.name}</div>` : 
-                            '<div class="list-item-subtitle">Agente: Non assegnato</div>'
-                        }
-                    </div>
-                    <div>
-                        <button class="btn btn-danger btn-sm replace-agent" data-train="${train.number}">Sostituisci</button>
-                    </div>
-                `;
-                criticalContainer.appendChild(itemEl);
-            });
-            
-            // Aggiungi event listener per i pulsanti di sostituzione
-            document.querySelectorAll('.replace-agent').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const trainNumber = this.getAttribute('data-train');
-                    openReplacementModal(trainNumber);
-                });
+                
+                weeklyCalendar.appendChild(dayElement);
             });
         }
 
-        function updateStatistics() {
-            const criticalTrains = liveTrains.filter(train => train.delay > 40 && !train.cancelled);
-            const availableAgents = allAgents.filter(agent => agent.isAvailable && !agent.currentAssignment);
+        // Load trains in service
+        function loadTrainsInService() {
+            trainsList.innerHTML = '';
             
-            document.getElementById('critical-delays').textContent = criticalTrains.length;
-            document.getElementById('available-agents').textContent = availableAgents.length;
-            document.getElementById('month-replacements').textContent = replacementHistory.length;
-        }
-
-        function updateShiftsTab() {
-            updateMyShifts();
-            updateTeamShifts();
-        }
-
-        function updateMyShifts() {
-            const myShiftsContainer = document.getElementById('my-shifts');
-            myShiftsContainer.innerHTML = '';
-            
-            // Trova i turni dell'utente corrente per oggi
-            const myShifts = monthlyShifts.filter(shift => 
-                shift.agent.id === currentUser.id && isToday(shift.date)
-            );
-            
-            if (myShifts.length === 0) {
-                myShiftsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📅</div>
-                        <p>Nessun turno oggi</p>
+            treniInServizio.forEach(train => {
+                let delayBadgeClass = 'delay-none';
+                let delayText = 'In orario';
+                
+                if (train.ritardo > 0 && train.ritardo <= 10) {
+                    delayBadgeClass = 'delay-low';
+                    delayText = `${train.ritardo} min`;
+                } else if (train.ritardo > 10) {
+                    delayBadgeClass = 'delay-high';
+                    delayText = `${train.ritardo} min`;
+                }
+                
+                const trainElement = document.createElement('div');
+                trainElement.className = 'train-status';
+                trainElement.innerHTML = `
+                    <div class="train-icon">🚆</div>
+                    <div class="train-info">
+                        <div class="train-number">${train.numero}</div>
+                        <div class="train-route">${train.percorso}</div>
                     </div>
+                    <div class="delay-badge ${delayBadgeClass}">${delayText}</div>
                 `;
-                return;
-            }
-            
-            myShifts.forEach(shift => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${shift.train.number}</div>
-                        <div class="list-item-subtitle">${shift.train.from} → ${shift.train.to}</div>
-                        <div class="list-item-detail">${shift.train.type} • ${formatTime(shift.date)}</div>
-                    </div>
-                    <div>
-                        <span class="btn btn-outline btn-sm">Dettagli</span>
-                    </div>
-                `;
-                myShiftsContainer.appendChild(itemEl);
+                
+                trainsList.appendChild(trainElement);
             });
         }
 
-        function updateTeamShifts() {
-            const teamShiftsContainer = document.getElementById('team-shifts');
-            teamShiftsContainer.innerHTML = '';
+        // Handle adding new agent
+        function handleAddAgent() {
+            const name = document.getElementById('newAgentName').value.trim();
+            const surname = document.getElementById('newAgentSurname').value.trim();
+            const sede = document.getElementById('newAgentSede').value;
+            const abilitiesSelect = document.getElementById('newAgentAbilities');
+            const selectedAbilities = Array.from(abilitiesSelect.selectedOptions).map(option => option.value);
             
-            // Trova i turni di oggi (escludendo l'utente corrente)
-            const todayShifts = monthlyShifts.filter(shift => 
-                isToday(shift.date) && shift.agent.id !== currentUser.id
-            ).slice(0, 5); // Mostra solo i primi 5
-            
-            if (todayShifts.length === 0) {
-                teamShiftsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">👥</div>
-                        <p>Nessun turno del team oggi</p>
-                    </div>
-                `;
+            if (!name || !surname) {
+                showAdminError('Inserisci nome e cognome dell\'agente');
                 return;
             }
             
-            todayShifts.forEach(shift => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${shift.agent.name}</div>
-                        <div class="list-item-subtitle">${shift.train.number}</div>
-                        <div class="list-item-detail">${shift.train.from} → ${shift.train.to}</div>
-                    </div>
-                    <div>
-                        <span class="btn btn-outline btn-sm">Contatta</span>
-                    </div>
-                `;
-                teamShiftsContainer.appendChild(itemEl);
-            });
-        }
-
-        function updateAgentsTab() {
-            updateAvailableAgents();
-            updateAssignedAgents();
-        }
-
-        function updateAvailableAgents() {
-            const availableContainer = document.getElementById('available-agents-list');
-            availableContainer.innerHTML = '';
-            
-            const availableAgents = allAgents.filter(agent => 
-                agent.isAvailable && !agent.currentAssignment
-            ).slice(0, 5); // Mostra solo i primi 5
-            
-            if (availableAgents.length === 0) {
-                availableContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">✅</div>
-                        <p>Nessun agente disponibile</p>
-                    </div>
-                `;
+            if (selectedAbilities.length === 0) {
+                showAdminError('Seleziona almeno un\'abilitazione');
                 return;
             }
             
-            availableAgents.forEach(agent => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${agent.name}</div>
-                        <div class="list-item-subtitle">${agent.badge} • ${agent.baseStation}</div>
-                        <div class="list-item-detail">${agent.qualifications.join(', ')}</div>
-                    </div>
-                    <div>
-                        <span class="btn btn-outline btn-sm">Assegna</span>
-                    </div>
-                `;
-                availableContainer.appendChild(itemEl);
-            });
+            // Generate agent ID
+            const sedeCode = sede.split(' ')[0].substring(0, 2).toUpperCase();
+            const agentCount = Object.keys(macchinistiData).filter(key => key.startsWith(sedeCode)).length + 1;
+            const agentId = `${sedeCode}_${agentCount.toString().padStart(3, '0')}`;
+            
+            // Add agent to data
+            macchinistiData[agentId] = {
+                nome: name,
+                cognome: surname,
+                sede: sede,
+                abilitazioni: selectedAbilities,
+                oreLavorate: 0,
+                kmPercorsi: 0,
+                treniGuidati: 0,
+                puntualita: 0,
+                ruolo: "macchinista"
+            };
+            
+            // Initialize empty data for the new agent
+            turniSettimanali[agentId] = [
+                { data: "Lun 16", turno: "R", treno: "-", attivo: false },
+                { data: "Mar 17", turno: "R", treno: "-", attivo: false },
+                { data: "Mer 18", turno: "R", treno: "-", attivo: false },
+                { data: "Gio 19", turno: "R", treno: "-", attivo: false },
+                { data: "Ven 20", turno: "R", treno: "-", attivo: false },
+                { data: "Sab 21", turno: "R", treno: "-", attivo: false },
+                { data: "Dom 22", turno: "R", treno: "-", attivo: true }
+            ];
+            
+            turnoOggi[agentId] = {
+                treno: "-",
+                percorso: "In attesa di assegnazione",
+                orario: "00:00 - 00:00",
+                ritardo: 0,
+                stato: "Non assegnato",
+                oreServizio: 0,
+                oreStraordinario: 0,
+                km: 0
+            };
+            
+            // Show success message
+            showAdminSuccess(`Agente ${name} ${surname} aggiunto con ID: ${agentId}`);
+            
+            // Clear form
+            document.getElementById('newAgentName').value = '';
+            document.getElementById('newAgentSurname').value = '';
+            abilitiesSelect.selectedIndex = -1;
+            
+            // Reload agents list
+            loadAgentsList();
         }
 
-        function updateAssignedAgents() {
-            const assignedContainer = document.getElementById('assigned-agents-list');
-            assignedContainer.innerHTML = '';
+        // Load agents list for admin
+        function loadAgentsList() {
+            agentsList.innerHTML = '';
             
-            const assignedAgents = allAgents.filter(agent => 
-                agent.currentAssignment
-            ).slice(0, 5); // Mostra solo i primi 5
-            
-            if (assignedAgents.length === 0) {
-                assignedContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">👤</div>
-                        <p>Nessun agente assegnato</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            assignedAgents.forEach(agent => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${agent.name}</div>
-                        <div class="list-item-subtitle">${agent.badge} • ${agent.baseStation}</div>
-                        <div class="list-item-detail">Assegnato a: ${agent.currentAssignment}</div>
-                    </div>
-                    <div>
-                        <span class="btn btn-outline btn-sm">Dettagli</span>
-                    </div>
-                `;
-                assignedContainer.appendChild(itemEl);
-            });
-        }
-
-        function updateReplacementsTab() {
-            updateActiveReplacements();
-            updateReplacementsHistory();
-        }
-
-        function updateActiveReplacements() {
-            const activeContainer = document.getElementById('active-replacements');
-            activeContainer.innerHTML = '';
-            
-            const activeReplacements = replacementHistory.filter(rep => 
-                rep.status === 'in_progress' || rep.status === 'pending'
-            ).slice(0, 3); // Mostra solo le ultime 3
-            
-            if (activeReplacements.length === 0) {
-                activeContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">✅</div>
-                        <p>Nessuna sostituzione in corso</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            activeReplacements.forEach(replacement => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${replacement.trainNumber}</div>
-                        <div class="list-item-subtitle">${replacement.oldAgent} → ${replacement.newAgent}</div>
-                        <div class="list-item-detail">${replacement.reason} • ${formatTime(replacement.timestamp)}</div>
-                    </div>
-                    <div>
-                        <span class="btn btn-outline btn-sm">Dettagli</span>
-                    </div>
-                `;
-                activeContainer.appendChild(itemEl);
-            });
-        }
-
-        function updateReplacementsHistory() {
-            const historyContainer = document.getElementById('replacements-history');
-            historyContainer.innerHTML = '';
-            
-            if (replacementHistory.length === 0) {
-                historyContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📝</div>
-                        <p>Nessuna sostituzione registrata</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const recentHistory = replacementHistory.slice(0, 5); // Mostra solo le ultime 5
-            
-            recentHistory.forEach(replacement => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'list-item';
-                itemEl.innerHTML = `
-                    <div class="list-item-info">
-                        <div class="list-item-title">${replacement.trainNumber}</div>
-                        <div class="list-item-subtitle">${replacement.oldAgent} → ${replacement.newAgent}</div>
-                        <div class="list-item-detail ${replacement.auto ? 'delay-warning' : ''}">
-                            ${replacement.reason} • Ritardo: ${replacement.delay}min
-                            ${replacement.auto ? ' (AUTO)' : ''}
+            Object.keys(macchinistiData).forEach(agentId => {
+                if (macchinistiData[agentId].ruolo === 'macchinista') {
+                    const agent = macchinistiData[agentId];
+                    
+                    const agentElement = document.createElement('div');
+                    agentElement.className = 'agent-item';
+                    agentElement.innerHTML = `
+                        <div class="agent-info">
+                            <h4>${agent.nome} ${agent.cognome}</h4>
+                            <p>ID: ${agentId} | Sede: ${agent.sede}</p>
+                            <p>Abilitazioni: ${agent.abilitazioni.join(', ')}</p>
                         </div>
-                        <div class="list-item-subtitle">${formatTime(replacement.timestamp)}</div>
-                    </div>
-                `;
-                historyContainer.appendChild(itemEl);
-            });
-        }
-
-        function monitorCriticalDelays() {
-            if (!autoReplacementMode) return;
-            
-            const criticalTrains = liveTrains.filter(train => train.needsReplacement && train.assignedAgent);
-            
-            criticalTrains.forEach(train => {
-                // Verifica se già esiste una sostituzione per questo treno
-                const existingReplacement = replacementHistory.find(rep => 
-                    rep.trainNumber === train.number && 
-                    (rep.status === 'in_progress' || rep.status === 'pending')
-                );
-                
-                if (!existingReplacement) {
-                    // Trova un agente disponibile
-                    const availableAgent = findAvailableAgent(train.assignedAgent);
+                        <div class="agent-actions">
+                            <button class="btn btn-outline btn-sm" onclick="editAgent('${agentId}')">Modifica</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAgent('${agentId}')">Elimina</button>
+                        </div>
+                    `;
                     
-                    if (availableAgent) {
-                        autoReplaceAgent(train, availableAgent);
-                    }
+                    agentsList.appendChild(agentElement);
                 }
             });
         }
 
-        function findAvailableAgent(currentAgent) {
-            return allAgents.find(agent => 
-                agent.id !== currentAgent.id && 
-                agent.isAvailable && 
-                !agent.currentAssignment
-            );
+        // Edit agent (placeholder function)
+        function editAgent(agentId) {
+            alert(`Modifica agente ${agentId} - Funzionalità in sviluppo`);
         }
 
-        function autoReplaceAgent(train, newAgent) {
-            const oldAgent = train.assignedAgent;
-            
-            // Crea record sostituzione
-            const replacement = {
-                id: replacementHistory.length + 1,
-                timestamp: new Date(),
-                trainNumber: train.number,
-                oldAgent: oldAgent.name,
-                newAgent: newAgent.name,
-                reason: 'Ritardo superiore a 40 minuti',
-                delay: train.delay,
-                status: 'completed',
-                auto: true
-            };
-            
-            replacementHistory.unshift(replacement);
-            
-            // Aggiorna assegnazione
-            train.assignedAgent = newAgent;
-            oldAgent.currentAssignment = null;
-            oldAgent.isAvailable = true;
-            newAgent.currentAssignment = train.number;
-            newAgent.isAvailable = false;
-            
-            // Aggiorna interfaccia
-            updateDashboard();
-            updateAgentsTab();
-            updateReplacementsTab();
-            
-            showNotification(`Sostituzione automatica: ${oldAgent.name} → ${newAgent.name} sul ${train.number}`, 'success');
-        }
-
-        function openReplacementModal(trainNumber) {
-            const train = liveTrains.find(t => t.number === trainNumber);
-            if (!train) return;
-            
-            document.getElementById('critical-train-info').innerHTML = `
-                <strong>${train.number}</strong><br>
-                ${train.from} → ${train.to}<br>
-                Ritardo: ${train.delay} minuti<br>
-                Agente attuale: ${train.assignedAgent ? train.assignedAgent.name : 'Nessuno'}
-            `;
-            
-            // Popola lista agenti disponibili
-            const agentSelect = document.getElementById('replacement-agent');
-            agentSelect.innerHTML = '<option value="">Seleziona agente disponibile...</option>';
-            
-            const availableAgents = allAgents.filter(agent => 
-                agent.isAvailable && 
-                !agent.currentAssignment &&
-                (!train.assignedAgent || agent.id !== train.assignedAgent.id)
-            );
-            
-            availableAgents.forEach(agent => {
-                const option = document.createElement('option');
-                option.value = agent.id;
-                option.textContent = `${agent.name} (${agent.badge}) - ${agent.baseStation}`;
-                agentSelect.appendChild(option);
-            });
-            
-            document.getElementById('replacement-modal').style.display = 'flex';
-        }
-
-        function setupEventListeners() {
-            // Tab navigation
-            document.querySelectorAll('.tab-item').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Rimuovi active da tutte le tab
-                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Aggiungi active alla tab cliccata
-                    this.classList.add('active');
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(`${tabId}-tab`).classList.add('active');
-                    
-                    // Aggiorna contenuti specifici tab
-                    if (tabId === 'shifts') {
-                        updateShiftsTab();
-                    } else if (tabId === 'agents') {
-                        updateAgentsTab();
-                    } else if (tabId === 'replacements') {
-                        updateReplacementsTab();
-                    } else if (tabId === 'dashboard') {
-                        updateDashboard();
-                    }
-                });
-            });
-            
-            // Form sostituzione
-            document.getElementById('replacement-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                performManualReplacement();
-            });
-            
-            // Modalità auto
-            document.getElementById('auto-replace-btn').addEventListener('click', function() {
-                autoReplacementMode = !autoReplacementMode;
-                this.textContent = autoReplacementMode ? 'Auto ON' : 'Auto OFF';
-                this.className = autoReplacementMode ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
-                showNotification(`Sostituzione automatica ${autoReplacementMode ? 'attivata' : 'disattivata'}`, 'info');
-            });
-            
-            // Filtro criticità sulla mappa
-            document.getElementById('toggle-critical').addEventListener('click', function() {
-                showOnlyCritical = !showOnlyCritical;
-                this.textContent = showOnlyCritical ? '📍' : '⚠️';
-                updateTrainMarkers();
-            });
-            
-            // Centra mappa sull'Italia
-            document.getElementById('center-map').addEventListener('click', function() {
-                map.setView([42.5, 12.5], 6);
-            });
-            
-            // Refresh dati
-            document.getElementById('refresh-btn').addEventListener('click', function() {
-                loadLiveTrainData();
-                showNotification('Dati aggiornati', 'success');
-            });
-            
-            document.getElementById('refresh-trains').addEventListener('click', function() {
-                loadLiveTrainData();
-                showNotification('Mappa aggiornata', 'success');
-            });
-            
-            // Chiusura modali
-            document.querySelectorAll('.close-modal').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.modal').forEach(modal => {
-                        modal.style.display = 'none';
-                    });
-                });
-            });
-            
-            // Pulisci storico
-            document.getElementById('clear-history').addEventListener('click', function() {
-                replacementHistory = [];
-                updateReplacementsTab();
-                showNotification('Storico sostituzioni pulito', 'success');
-            });
-        }
-
-        function performManualReplacement() {
-            const trainNumber = document.getElementById('critical-train-info').textContent.split('\n')[0].trim();
-            const train = liveTrains.find(t => t.number === trainNumber);
-            const newAgentId = parseInt(document.getElementById('replacement-agent').value);
-            const reason = document.getElementById('replacement-reason').value;
-            const notes = document.getElementById('replacement-notes').value;
-            
-            if (!train || !newAgentId) {
-                showNotification('Seleziona un agente valido', 'warning');
-                return;
+        // Delete agent
+        function deleteAgent(agentId) {
+            if (confirm(`Sei sicuro di voler eliminare l'agente ${agentId}?`)) {
+                delete macchinistiData[agentId];
+                delete turniSettimanali[agentId];
+                delete turnoOggi[agentId];
+                showAdminSuccess(`Agente ${agentId} eliminato con successo`);
+                loadAgentsList();
             }
-            
-            const newAgent = allAgents.find(a => a.id === newAgentId);
-            const oldAgent = train.assignedAgent;
-            
-            // Crea record sostituzione
-            const replacement = {
-                id: replacementHistory.length + 1,
-                timestamp: new Date(),
-                trainNumber: train.number,
-                oldAgent: oldAgent ? oldAgent.name : 'Nessuno',
-                newAgent: newAgent.name,
-                reason: reason,
-                delay: train.delay,
-                notes: notes,
-                status: 'completed',
-                auto: false
-            };
-            
-            replacementHistory.unshift(replacement);
-            
-            // Aggiorna assegnazione
-            if (oldAgent) {
-                oldAgent.currentAssignment = null;
-                oldAgent.isAvailable = true;
-            }
-            train.assignedAgent = newAgent;
-            newAgent.currentAssignment = train.number;
-            newAgent.isAvailable = false;
-            
-            // Chiudi modale e aggiorna interfaccia
-            document.getElementById('replacement-modal').style.display = 'none';
-            document.getElementById('replacement-form').reset();
-            
-            updateDashboard();
-            updateAgentsTab();
-            updateReplacementsTab();
-            
-            showNotification(`Sostituzione completata: ${newAgent.name} assegnato a ${train.number}`, 'success');
         }
 
-        function updateTrainPositions() {
-            // Simula l'aggiornamento delle posizioni dei treni
-            liveTrains.forEach(train => {
-                if (train.cancelled) return;
-                
-                // Aggiorna posizione (simula movimento)
-                const fromCoords = italianStations[train.from];
-                const toCoords = italianStations[train.to];
-                
-                // Calcola direzione e sposta leggermente
-                const latDiff = toCoords.lat - fromCoords.lat;
-                const lngDiff = toCoords.lng - fromCoords.lng;
-                const distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
-                
-                if (distance > 0.01) { // Se non è ancora arrivato
-                    train.position.lat += (latDiff / distance) * 0.01;
-                    train.position.lng += (lngDiff / distance) * 0.01;
-                }
-                
-                // Aggiorna velocità e ritardo casualmente
-                train.speed = Math.max(50, train.speed + (Math.random() - 0.5) * 20);
-                if (Math.random() > 0.8) {
-                    train.delay += Math.floor(Math.random() * 3);
-                } else if (Math.random() > 0.9 && train.delay > 0) {
-                    train.delay -= 1;
-                }
-                
-                // Aggiorna flag sostituzione
-                train.needsReplacement = train.delay > 40 && !train.cancelled;
-                
-                train.lastUpdate = new Date();
-            });
-            
-            updateTrainMarkers();
-            updateDashboard();
-        }
-
-        function showNotification(message, type) {
-            // Crea un elemento di notifica
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            
-            document.body.appendChild(notification);
-            
-            // Rimuovi dopo 3 secondi
+        // Show admin success message
+        function showAdminSuccess(message) {
+            adminSuccess.textContent = message;
+            adminSuccess.style.display = 'block';
             setTimeout(() => {
-                notification.style.opacity = '0';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
+                adminSuccess.style.display = 'none';
+            }, 5000);
         }
 
-        function formatTime(date) {
-            return date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        // Show admin error message
+        function showAdminError(message) {
+            adminError.textContent = message;
+            adminError.style.display = 'block';
+            setTimeout(() => {
+                adminError.style.display = 'none';
+            }, 5000);
         }
 
-        function setupTabNavigation() {
-            // Gestione del cambio tab
+        // Helper function to get shift name
+        function getShiftName(shiftCode) {
+            const shifts = {
+                'M': 'Mattina',
+                'P': 'Pomeriggio',
+                'N': 'Notte',
+                'R': 'Riposo',
+                'A': 'Amministrazione'
+            };
+            return shifts[shiftCode] || shiftCode;
         }
+
+        // Helper function to get next stop (simulated)
+        function getNextStop(trainNumber) {
+            const stops = {
+                "AV 8842": "Firenze Santa Maria Novella",
+                "AV 9240": "Roma Termini",
+                "AV 8762": "Firenze Santa Maria Novella"
+            };
+            return stops[trainNumber] || "Dati non disponibili";
+        }
+
+        // Initialize the application when the page loads
+        window.addEventListener('DOMContentLoaded', init);
+        
+        // Make functions global for HTML onclick handlers
+        window.editAgent = editAgent;
+        window.deleteAgent = deleteAgent;
     </script>
 </body>
 </html>
